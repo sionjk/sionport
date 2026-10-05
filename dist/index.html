@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f1e9">
+  <meta name="description" content="Sion King — Statistics major at the University of Central Florida. Leave a point. Become part of the distribution.">
+  <title>Sion King</title>
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="assets/supabase.js"></script>
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead"><a href="#distribution" class="wordmark"><span class="arrow-slot"><img src="assets/arrow-down.svg" alt=""></span><span>a little further</span></a><img class="rule" src="assets/line-top.svg" alt=""></header>
+    <main>
+      <section class="intro" aria-labelledby="name">
+        <p class="hello">Hello, world. I’m</p>
+        <h1 id="name">Sion King<span>.</span></h1>
+        <p class="bio">Statistics Major at University of Central Florida</p>
+        <nav class="socials" aria-label="Find me online">
+          <a data-link="github" aria-label="GitHub — coming soon" aria-disabled="true" tabindex="0"><img src="assets/github.svg" alt=""><span class="tooltip">GitHub · coming soon</span></a>
+          <a data-link="linkedin" aria-label="LinkedIn — coming soon" aria-disabled="true" tabindex="0"><img src="assets/linkedin.svg" alt=""><span class="tooltip">LinkedIn · coming soon</span></a>
+          <a data-link="email" aria-label="Email — coming soon" aria-disabled="true" tabindex="0"><img src="assets/mail.svg" alt=""><span class="tooltip">Email · coming soon</span></a>
+          <a data-link="resume" aria-label="Résumé — coming soon" aria-disabled="true" tabindex="0"><img src="assets/file.svg" alt=""><span class="tooltip">Résumé · coming soon</span></a>
+        </nav>
+      </section>
+      <section class="distribution" id="distribution" aria-labelledby="plot-caption">
+        <div class="plot-meta"><span>COLLECTIVE DISTRIBUTION</span><span class="plot-connection"><span id="live" data-state="connecting">CONNECTING</span><span id="count">n = —</span></span></div>
+        <div class="chart">
+          <span class="axis-y">1.0</span><span class="axis-zero">0.0</span>
+          <canvas id="plot" width="560" height="364" tabindex="0" role="application" aria-label="Shared ASCII scatterplot. Click to leave a point. Use arrow keys to move and Enter or Space to add a point." aria-describedby="plot-caption plot-status"></canvas>
+          <div class="axis-x"><span>0.0</span><span>0.5</span><span>1.0</span></div>
+        </div>
+        <div class="plot-readout"><span id="coordinates" aria-hidden="true">x — &nbsp; y —</span><span class="density-key" title="Heavier marks indicate more clicks in the same cell">· + * # <span>density</span></span></div>
+        <h2 id="plot-caption">Leave a point.<br>Become part of the distribution.</h2>
+        <div class="plot-bottom"><p id="plot-status" role="status" aria-live="polite">Connecting to the distribution…</p><button id="retry" type="button" hidden>Retry</button></div>
+        <noscript><p>Enable JavaScript to view and contribute to the shared plot.</p></noscript>
+      </section>
+    </main>
+    <footer><img class="rule" src="assets/line-bottom.svg" alt=""><div class="footer-content"><p>Still learning. Always sampling.</p><span class="closing">Never give up<span class="arrow-slot"><img src="assets/arrow-up.svg" alt=""></span></span></div></footer>
+  </div>
+</body>
+</html>
+
