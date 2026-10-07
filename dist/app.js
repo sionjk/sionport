@@ -20,6 +20,7 @@
   const live = document.querySelector('#live'), coordinates = document.querySelector('#coordinates');
   const C = 56, R = 28, W = 560, H = 364;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let heatmap = false;
   let cells = new Map(), ready = false, busy = false, lastSent = 0;
   let cursor = null, channel = null, client = null, refreshPromise = null;
   let ripples = [], frame = null;
@@ -48,6 +49,7 @@
     for(let y=0;y<R;y++) for(let x=0;x<C;x++) {
       const n=Number(cells.get(cellKey(x,y))?.n || 0);
       if(!n){if(x%4===0&&y%4===0){ctx.fillStyle='#dfdbd1';ctx.fillRect((x+.5)*W/C,(R-y-.5)*H/R,1,1);}continue;}
+      if(heatmap){ctx.fillStyle=`rgba(90,89,121,${Math.min(.9,.18+Math.log2(n+1)*.14)})`;ctx.fillRect(x*W/C,(R-y-1)*H/R,W/C-1,H/R-1);continue;}
       const char=n>7?'#':n>3?'*':n>1?'+':'·';
       ctx.font = `${n>1?'bold ':''}17px Consolas, monospace`;
       ctx.fillStyle = ripples.some(r=>r.x===x&&r.y===y)?'#a65132':'#34342d';
@@ -58,7 +60,7 @@
       ctx.strokeStyle=`rgba(166,81,50,${(1-t)*.6})`;ctx.lineWidth=1;
       ctx.beginPath();ctx.arc(px,py,5+30*(1-(1-t)**3),0,Math.PI*2);ctx.stroke();
     }
-    coordinates.textContent=cursor?`x ${((cursor.x+.5)/C).toFixed(2)}   y ${((cursor.y+.5)/R).toFixed(2)}`:'x —   y —';
+    coordinates.textContent=cursor?`x ${((cursor.x+.5)/C).toFixed(2)}   y ${((cursor.y+.5)/R).toFixed(2)} · ${Number(cells.get(cellKey(cursor.x,cursor.y))?.n||0)} here`:'x —   y —';
     if(cursor){
       const px=(cursor.x+.5)*W/C,py=(R-cursor.y-.5)*H/R;
       ctx.strokeStyle='rgba(166,81,50,.25)';ctx.lineWidth=1;ctx.setLineDash([2,5]);
@@ -147,6 +149,7 @@
     if(e.key==='ArrowDown')cursor.y=Math.max(0,cursor.y-1);
     if(e.key==='Enter'||e.key===' ')submit({id:crypto.randomUUID(),x:(cursor.x+.5)/C,y:(cursor.y+.5)/R});draw();
   });
+  document.querySelector('#plot-mode')?.addEventListener('click', e=>{heatmap=!heatmap;e.currentTarget.setAttribute('aria-pressed',String(heatmap));e.currentTarget.textContent=heatmap?'Show ASCII':'Show heatmap';draw();});
   retry.addEventListener('click',()=>retryAction?.());
   document.addEventListener('visibilitychange',()=>{if(!document.hidden && client)refresh().catch(()=>{});});
   window.addEventListener('online',connect);
