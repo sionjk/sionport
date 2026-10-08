@@ -1,32 +1,37 @@
-/* Edit the three projects here. image is a local asset path; url is optional. */
+/* Project content and approved ASCII artwork. */
 window.PROJECTS = [
- { title:'Halo', category:'PROJECT / 01', description:'Project overview coming soon.', detail:'A closer look at the question, process, and outcome will live here.', image:'', url:'', graphic:'halo' },
- { title:'Happiness Multiple Linear Regression Model', category:'STATISTICS / 02', description:'Project overview coming soon.', detail:'The dataset, predictors, model evaluation, and findings will be added here.', image:'', url:'', graphic:'happiness' },
- { title:'Graduate Admissions Multiple Linear Regression Model', category:'STATISTICS / 03', description:'Project overview coming soon.', detail:'The research question, modeling approach, and conclusions will be added here.', image:'', url:'', graphic:'admissions' }
+ {title:'Halo',category:'HARDWARE / 01',description:'A smart bike helmet that watches for approaching vehicles and alerts the rider through visual, audio, and haptic cues.',detail:'Raspberry Pi, Arduino, cameras, and ultrasonic sensors bring computer vision and real-time sensing together in a working prototype.',graphic:'halo',note:'Smart helmet · Onboard computing and sensors',links:[{platform:'Devpost',title:'Halo',detail:'The build, demo, and hackathon story',url:'https://devpost.com/software/halo-1q59hf'},{platform:'GitHub',title:'billpquach / halo',detail:'Explore the source code',url:'https://github.com/billpquach/halo'}]},
+ {title:'Social media & happiness',category:'STATISTICS / 02',description:'Exploring how social media habits, sleep, stress, and age relate to happiness using survey data from 500 participants.',detail:'Built and evaluated regression models in R. The graphic compares observed happiness with back-transformed predictions and 95% prediction intervals.',graphic:'social',note:'Actual vs. predicted happiness · In-sample fit',links:[{platform:'GitHub',title:'sionjk / Social-Media-Happiness-Regression',detail:'Explore the analysis and source code',url:'https://github.com/sionjk/Social-Media-Happiness-Regression'}]},
+ {title:'Graduate admissions',category:'STATISTICS / 03',description:'Examining which academic factors are associated with graduate admission chance through multiple linear regression.',detail:'Compared predictors, checked model assumptions, and refined the model. CGPA showed the strongest single-predictor relationship with admission chance.',graphic:'grad',note:'Simplified CGPA-only fitted trend',links:[]}
 ];
 (() => {
- const $=s=>document.querySelector(s), projects=window.PROJECTS; let current=0;
- const dots=[...document.querySelectorAll('[data-project]')];
- function graphic(kind){
-  const common='<svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
-  if(kind==='halo')return common+'<circle cx="230" cy="156" r="105" fill="none" stroke="#3c3c4c" stroke-width="1"/><circle cx="230" cy="156" r="84" fill="none" stroke="#3c3c4c" stroke-width="18"/><path d="M100 156H360M230 26V286" stroke="#3c3c4c" stroke-dasharray="2 7"/><text x="230" y="322" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#3c3c4c">H A L O</text></svg>';
-  const pts=Array.from({length:32},(_,i)=>{const x=45+(i*53%360),y=260-x*.43+Math.sin(i*2.4)*43;return `<circle cx="${x}" cy="${y}" r="${i%4===0?5:3}" fill="#3c3c4c" opacity=".7"/>`;}).join('');
-  return common+'<path d="M35 25V285H430" fill="none" stroke="#3c3c4c"/><path d="M35 220H430M35 155H430M35 90H430" stroke="#3c3c4c" opacity=".12"/>'+pts+'<path d="M40 246L416 79" stroke="#f4f1e9" stroke-width="3"/><text x="230" y="324" text-anchor="middle" font-family="Georgia,serif" font-size="19" fill="#3c3c4c">'+(kind==='happiness'?'Happiness, in context.':'Understanding admissions.')+'</text></svg>';
- }
- function render(){const p=projects[current];$('#project-title').textContent=p.title;$('#project-type').textContent=p.category;$('#project-description').textContent=p.description;$('#project-detail').textContent=p.detail;$('#project-count').textContent=`${String(current+1).padStart(2,'0')} / ${String(projects.length).padStart(2,'0')}`;
- dots.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===current)));
- const art=$('#project-art');art.replaceChildren();if(p.image){const img=new Image();img.src=p.image;img.alt=p.title+' project preview';img.style.cssText='width:100%;height:auto;display:block';art.append(img);}else art.innerHTML=graphic(p.graphic);
- $('#art-note').textContent=p.image?'Project preview':p.graphic==='halo'?'Concept graphic · project image to follow':'Illustrative graphic · not project results';
- const link=$('#project-link');let safe=false;try{safe=!!p.url&&['https:','http:'].includes(new URL(p.url,location.href).protocol);}catch{}link.hidden=!safe;if(safe)link.href=p.url;else link.removeAttribute('href');
+ const $=s=>document.querySelector(s),projects=window.PROJECTS;let current=0,disposeArt;
+ const dots=[...document.querySelectorAll('.project-dots [data-project]')],art=$('#project-art'),visual=$('#project-visual');
+ function resetTilt(){art.style.transform='none';}
+ function render(){
+  const p=projects[current];$('#project-title').textContent=p.title;$('#project-type').textContent=p.category;$('#project-description').textContent=p.description;$('#project-detail').textContent=p.detail;$('#project-count').textContent=`${String(current+1).padStart(2,'0')} / ${String(projects.length).padStart(2,'0')}`;
+  dots.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===current)));
+  if(disposeArt)disposeArt();resetTilt();art.replaceChildren();
+  visual.dataset.art=p.graphic;
+  const canvas=document.createElement('canvas');canvas.className='project-ascii';canvas.setAttribute('role','img');
+  canvas.setAttribute('aria-label',p.graphic==='halo'?'ASCII illustration of the Halo helmet, onboard computer, wiring, and sensors':p.graphic==='social'?'ASCII chart of actual versus predicted happiness, showing prediction intervals and the equality reference line':'Simplified ASCII fitted trend: higher CGPA is associated with higher predicted admission chance in the CGPA-only model');
+  art.append(canvas);disposeArt=window.ProjectAscii.mount(canvas,p.graphic);$('#art-note').textContent=p.note;
+  const cards=$('#project-links');cards.replaceChildren();cards.hidden=!p.links.length;
+  for(const item of p.links){const link=document.createElement('a');link.className='project-resource';link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';
+   const platform=document.createElement('span');platform.className='project-resource-platform';platform.textContent=item.platform;
+   const title=document.createElement('span');title.className='project-resource-title';title.textContent=item.title;
+   const detail=document.createElement('span');detail.className='project-resource-detail';detail.textContent=item.detail;
+   link.append(platform,title,detail);cards.append(link);
+  }
  }
  function move(n){current=(current+n+projects.length)%projects.length;render();}
  $('#previous-project').addEventListener('click',()=>move(-1));$('#next-project').addEventListener('click',()=>move(1));dots.forEach((b,i)=>b.addEventListener('click',()=>{current=i;render();}));
  $('.project-carousel').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();move(e.key==='ArrowRight'?1:-1);}});
- const links=[...document.querySelectorAll('.section-nav a')];
- const sections=['home','projects','about'].map(id=>document.getElementById(id));
+ const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+ visual.addEventListener('pointermove',e=>{if(e.pointerType==='touch'||reduced.matches)return;const r=visual.getBoundingClientRect();art.style.transform=`rotateX(${(.5-(e.clientY-r.top)/r.height)*4}deg) rotateY(${((e.clientX-r.left)/r.width-.5)*5}deg)`;});
+ visual.addEventListener('pointerleave',resetTilt);reduced.addEventListener('change',resetTilt);
+ const links=[...document.querySelectorAll('.section-nav a')],sections=['home','projects','about'].map(id=>document.getElementById(id));
  function updateNavigation(){let active=sections[0];sections.forEach(section=>{if(section.getBoundingClientRect().top<=innerHeight*.4)active=section;});links.forEach(a=>{if(a.hash==='#'+active.id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});}
- let pending=false;window.addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(()=>{updateNavigation();pending=false;});}},{passive:true});window.addEventListener('resize',updateNavigation);updateNavigation();
- render();
+ let pending=false;window.addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(()=>{updateNavigation();pending=false;});}},{passive:true});window.addEventListener('resize',updateNavigation);updateNavigation();render();
+ const ruleObserver=new ResizeObserver(entries=>entries.forEach(({target,contentRect})=>{const img=target.querySelector('img');if(img)img.style.transform='scaleX('+(contentRect.width/458)+')';}));document.querySelectorAll('.project-rule').forEach(el=>ruleObserver.observe(el));
 })();
-
-const ruleObserver=new ResizeObserver(entries=>entries.forEach(({target,contentRect})=>{const img=target.querySelector('img');img.style.transform='scaleX('+(contentRect.width/(target.classList.contains('top')?458:458.004))+')';}));document.querySelectorAll('.project-rule').forEach(el=>ruleObserver.observe(el));
