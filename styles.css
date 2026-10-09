@@ -40,7 +40,7 @@ footer{font:20px/1.5 'Neuton',serif}.footer-content{display:flex;align-items:cen
 
 /* Balanced introduction and optically centered monogram. */
 .monogram{display:grid;place-items:center;width:54px;height:54px;padding:0;letter-spacing:0;font-size:30px;line-height:1}
-.monogram span{color:inherit;letter-spacing:-2px;transform:translate(-1px,-1px)}
+.monogram span{color:inherit;letter-spacing:-2px;transform:translate(-3px,-3px)}
 .hero{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(32px,4vw,64px);padding:clamp(56px,9vh,96px) 0}
 .intro{min-width:0}.hello{font-size:clamp(24px,2.2vw,32px);line-height:1.45}
 #name{font-size:clamp(88px,9vw,132px);line-height:1.02;letter-spacing:-1.8px;margin:3px 0 22px}
