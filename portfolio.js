@@ -9,13 +9,13 @@ window.PROJECTS = [
  const dots=[...document.querySelectorAll('.project-dots [data-project]')],art=$('#project-art'),visual=$('#project-visual');
  function resetTilt(){art.style.transform='none';}
  function render(){
-  const p=projects[current];$('#project-title').textContent=p.title;$('#project-type').textContent=p.category;$('#project-description').textContent=p.description;$('#project-detail').textContent=p.detail;$('#project-count').textContent=`${String(current+1).padStart(2,'0')} / ${String(projects.length).padStart(2,'0')}`;
+  const p=projects[current];$('#project-title').textContent=p.title;$('#project-description').textContent=p.description;$('#project-detail').textContent=p.detail;$('#project-count').textContent=`${String(current+1).padStart(2,'0')} / ${String(projects.length).padStart(2,'0')}`;
   dots.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===current)));
   if(disposeArt)disposeArt();resetTilt();art.replaceChildren();
   visual.dataset.art=p.graphic;
   const canvas=document.createElement('canvas');canvas.className='project-ascii';canvas.setAttribute('role','img');
   canvas.setAttribute('aria-label',p.graphic==='halo'?'ASCII illustration of the Halo helmet, onboard computer, wiring, and sensors':p.graphic==='social'?'ASCII chart of actual versus predicted happiness, showing prediction intervals and the equality reference line':'Simplified ASCII fitted trend: higher CGPA is associated with higher predicted admission chance in the CGPA-only model');
-  art.append(canvas);disposeArt=window.ProjectAscii.mount(canvas,p.graphic);$('#art-note').textContent=p.note;
+  art.append(canvas);disposeArt=window.ProjectAscii.mount(canvas,p.graphic);
   const event=$('#project-event');event.textContent=p.event||'';event.hidden=!p.event;
   const awards=$('#project-awards');awards.hidden=!p.awards;awards.textContent=(p.awards||'').replace(' | ','\n');
   const cards=$('#project-links');cards.replaceChildren();cards.hidden=!p.links.length;
@@ -23,7 +23,7 @@ window.PROJECTS = [
    const platform=document.createElement('span');platform.className='project-resource-platform';platform.textContent=item.platform;
    const title=document.createElement('span');title.className='project-resource-title';title.textContent=item.title;
    const detail=document.createElement('span');detail.className='project-resource-detail';detail.textContent=item.detail;
-   link.append(platform,title,detail);cards.append(link);
+   link.append(platform);link.setAttribute("aria-label",`${item.platform}: ${item.title}`);cards.append(link);
    if(item.preview){const panel=document.createElement('details');panel.className='project-pdf';const summary=document.createElement('summary');summary.textContent='Preview first page';const preview=document.createElement('a');preview.href=item.url;preview.target='_blank';preview.rel='noopener noreferrer';preview.setAttribute('aria-label','Open the complete Graduate Admissions R Script PDF');const image=document.createElement('img');image.src='assets/graduate-admissions-preview.png';image.alt='First page of Graduate Admissions R Script';image.loading='lazy';preview.append(image);panel.append(summary,preview);cards.append(panel);}
 
   }

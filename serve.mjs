@@ -9,4 +9,4 @@ http.createServer(async(req,res)=>{
     if(!file.startsWith(root)){res.writeHead(403);res.end();return;}
     const data=await fs.readFile(file);res.writeHead(200,{'Content-Type':mime[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});res.end(data);
   }catch{res.writeHead(404);res.end('Not found');}
-}).listen(4173,'127.0.0.1',()=>console.log('Portfolio preview: http://127.0.0.1:4173'));
+}).listen(Number(process.env.PORT || 4173),'127.0.0.1',()=>console.log(`Portfolio preview: http://127.0.0.1:${process.env.PORT || 4173}`));
