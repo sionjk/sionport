@@ -1,6 +1,6 @@
 # sion king — monochrome portfolio
 
-The approved redesign: pure black, lowercase Courier New monospace typography, an ASCII portrait on home, three original project graphics and descriptions, and an animated ASCII Lain dance. There are no gradients.
+The redesign: pure black, lowercase Courier New monospace typography, an ASCII portrait on home, three original project graphics and descriptions, and an animated ASCII Lain dance. 
 
 ## Preview
 
