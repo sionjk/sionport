@@ -11,7 +11,7 @@ function sample(a,x,y){const i=(Math.min(a.h-1,Math.max(0,Math.round(y)))*a.w+Ma
 function draw(){
 const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
 const dpr=Math.max(2,window.devicePixelRatio||1);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
-const ink=theme('--ascii-ink'),muted=theme('--ascii-muted'),graph=theme('--ascii-accent'),dark=true,a=assets[key];ctx.textAlign='center';ctx.textBaseline='middle';
+const ink=theme('--ascii-ink'),muted=theme('--ascii-muted'),graph=theme('--ascii-accent'),dark=document.documentElement.dataset.theme!=='light',a=assets[key];ctx.textAlign='center';ctx.textBaseline='middle';
 if(key==='halo'){
  const ih=h-12,iw=Math.min(w,ih*a.w/a.h),ox=(w-iw)/2,oy=(h-ih)/2;
  const stepX=w<420?2.8:3.3,stepY=stepX*1.62,cols=Math.floor(iw/stepX),rows=Math.floor(ih/stepY);
@@ -31,23 +31,23 @@ if(key==='halo'){
 }else if(key==='grad'){
  const left=w<420?50:64,right=24,top=45,bottom=55,pw=w-left-right,ph=h-top-bottom;
  const xPos=v=>left+(v-2.5)/1.5*pw,yPos=v=>top+(100-v)/80*ph;
- ctx.fillStyle=ink;ctx.font='13px "Courier New",monospace';ctx.fillText('cgpa and admission chance',w/2,16);
+ ctx.fillStyle=ink;ctx.font='13px "Courier New",monospace';ctx.fillText('CGPA and admission chance',w/2,16);
  ctx.fillStyle=muted;ctx.font='11px "Courier New",monospace';
  for(let x=left;x<=left+pw;x+=8)ctx.fillText('-',x,top+ph+5);
  for(let y=top;y<top+ph;y+=10)ctx.fillText('|',left-5,y);
  ctx.font='12px "Courier New",monospace';
  for(const v of [2.5,3,3.5,4]){ctx.textAlign=v===2.5?'left':v===4?'right':'center';ctx.fillText(v,xPos(v),top+ph+22)}
  ctx.textAlign='right';for(const v of [20,60,100])ctx.fillText(v,left-12,yPos(v));
- ctx.textAlign='center';ctx.fillStyle=ink;ctx.fillText('cgpa (out of 4)',left+pw/2,h-10);
- ctx.save();ctx.translate(12,top+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('predicted admission chance (%)',0,0);ctx.restore();
+ ctx.textAlign='center';ctx.fillStyle=ink;ctx.fillText('CGPA (out of 4)',left+pw/2,h-10);
+ ctx.save();ctx.translate(12,top+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('Predicted admission chance (%)',0,0);ctx.restore();
  // Exact univariate coefficients reported on p. 11; no fabricated observations.
  ctx.font='500 16px "Courier New",monospace';ctx.fillStyle=color?graph:ink;
  const count=w<420?20:36;
  for(let i=0;i<count;i++){const x=2.6+(3.95-2.6)*i/(count-1);ctx.fillText('/',xPos(x),yPos(-107.215+52.231*x))}
- ctx.fillStyle=ink;ctx.font='12px "Courier New",monospace';ctx.textAlign='left';ctx.fillText('fitted trend',xPos(2.65),yPos(76));
+ ctx.fillStyle=ink;ctx.font='12px "Courier New",monospace';ctx.textAlign='left';ctx.fillText('Fitted trend',xPos(2.65),yPos(76));
 }else{
  const left=w<420?48:64,right=18,top=44,bottom=55,pw=w-left-right,ph=h-top-bottom;
- ctx.font='13px "Courier New",monospace';ctx.fillStyle=ink;ctx.fillText(key==='social'?'actual vs. predicted happiness':'Admission chance vs. CGPA',w/2,16);
+ ctx.font='13px "Courier New",monospace';ctx.fillStyle=ink;ctx.fillText(key==='social'?'Actual vs. Predicted happiness':'Admission chance vs. CGPA',w/2,16);
  const cw=3.6,ch=6.5,cols=Math.floor(pw/cw),rows=Math.floor(ph/ch);ctx.font='900 9px "Courier New",monospace';
  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
   const [r,g,b]=sample(a,(x+.5)*a.w/cols,(y+.5)*a.h/rows),lum=(r+g+b)/3;
@@ -65,12 +65,13 @@ if(key==='halo'){
  const yPos=v=>key==='social'?top+(366-v*28.17)/383*ph:top+(100-v)/80*ph;
  for(const v of xt){ctx.textAlign=v===xt[0]?'left':v===xt[xt.length-1]?'right':'center';ctx.fillText(v,xPos(v),top+ph+21)}
  ctx.textAlign='right';for(const v of yt)ctx.fillText(v,left-12,yPos(v));
- ctx.textAlign='center';ctx.fillStyle=ink;ctx.fillText(key==='social'?'actual happiness (1–10)':'cgpa (out of 4)',left+pw/2,h-10);
- ctx.save();ctx.translate(12,top+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText(key==='social'?'predicted happiness':'Admission chance (%)',0,0);ctx.restore();
+ ctx.textAlign='center';ctx.fillStyle=ink;ctx.fillText(key==='social'?'Actual happiness (1–10)':'CGPA (out of 4)',left+pw/2,h-10);
+ ctx.save();ctx.translate(12,top+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText(key==='social'?'Predicted happiness':'Admission chance (%)',0,0);ctx.restore();
 }
 }
 
  const observer=new ResizeObserver(draw);observer.observe(canvas);draw();
- return ()=>observer.disconnect();
+ window.addEventListener('themechange',draw);
+ return ()=>{observer.disconnect();window.removeEventListener('themechange',draw);};
  }};
 })();

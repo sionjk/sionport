@@ -1,4 +1,20 @@
 (() => {
+ const themeToggle=document.getElementById('theme-toggle');
+ function setTheme(theme){
+  const light=theme==='light';
+  document.documentElement.dataset.theme=light?'light':'dark';
+  themeToggle.textContent=light?'Dark mode':'Light mode';
+  themeToggle.setAttribute('aria-label',light?'Switch to dark mode':'Switch to light mode');
+  document.querySelector('meta[name="theme-color"]').content=light?'#ffffff':'#000000';
+  window.dispatchEvent(new Event('themechange'));
+ }
+ setTheme(document.documentElement.dataset.theme);
+ themeToggle.addEventListener('click',()=>{
+  const theme=document.documentElement.dataset.theme==='light'?'dark':'light';
+  setTheme(theme);
+  try{localStorage.setItem('sion-theme',theme);}catch{}
+ });
+ window.addEventListener('storage',event=>{if(event.key==='sion-theme'||event.key===null)setTheme(event.newValue==='light'?'light':'dark');});
  const header=document.querySelector('.masthead');
  function sizeText(pre){const width=pre.parentElement.clientWidth;const cols=Number(pre.dataset.columns);pre.style.fontSize=`${width/(cols*.6001)}px`;}
  document.querySelectorAll('.ascii-text').forEach(pre=>{sizeText(pre);new ResizeObserver(()=>sizeText(pre)).observe(pre.parentElement);});
